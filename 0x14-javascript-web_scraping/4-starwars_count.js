@@ -1,15 +1,12 @@
 #!/usr/bin/node
-
-const myArray = process.argv.slice(2);
 const request = require('request');
-
-request(myArray[0], function (error, response, body) {
-  if (error) { console.log(error); } else {
+request(process.argv[2], function (error, response, body) {
+  if (!error) {
     const results = JSON.parse(body).results;
-    let count = 0;
-    if (results && results.length >= 1) {
-      results.forEach(dict => { if (dict.characters.includes('https://swapi.co/api/people/18/')) { count++; } });
-    }
-    console.log(count);
+    console.log(results.reduce((count, movie) => {
+      return movie.characters.find((character) => character.endsWith('/18/'))
+        ? count + 1
+        : count;
+    }, 0));
   }
 });
